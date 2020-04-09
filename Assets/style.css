@@ -1,0 +1,13 @@
+.navbar {
+    float: none;
+    text-align: center;
+}
+
+.weather-search {
+    background-color: aqua;
+
+}
+
+.weather-results {
+    float: right;
+}

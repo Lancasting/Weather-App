@@ -1,41 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>Weather Dashboard</title>
+  <title>Weather Dashboard</title>
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar text-center">Weather Dashboard</a>
-</nav>
-<div class="container">
-      <div class="row">
-        <div class="col-md-6">
-         <h1>Weather search</h1>
-         <form>
-          <div class="form-group">
-            <label for="city">City Search</label>
-            <input type="city-search" class="form-control" id="city">
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        <div class="col-md-6 weather-results">
-         <h1>
-           Weather results
-         </h1>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 card search">
+        <div class="card body">
+          <h1>Weather search</h1>
+          <form>
+            <div class="form-group">
+              <label for="city">City Search</label>
+              <input type="city-search" class="form-control" id="city"> <button type="submit"
+                class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="card col-md-6">
+        <div class="card-body weather-results">
+          <h1 id="city-name"></h1>
+          <br>
+          <p id="temperature-results"></p>
+          <br>
+          <p id="humidity"></p>
+          <br>
+          <p id="wind-speed"></p>
+          <br>
+          <p id="uv-index"></p>
+          <br>
         </div>
       </div>
     </div>
   </div>
-<script
-  src="https://code.jquery.com/jquery-3.4.1.js"
-  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-  crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/94d4929d6b.js" crossorigin="anonymous"></script>
-    <script src="javascript.js"></script>
+  </div>
+  </div>
+  <div class=" card-body 5-day float-right col-md-6">
+  </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/94d4929d6b.js" crossorigin="anonymous"></script>
+  <script src="javascript.js"></script>
 
 </body>
 

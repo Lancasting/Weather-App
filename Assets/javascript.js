@@ -64,9 +64,9 @@ $(document).submit(function () {
   //Purpose is to create one card with the day passed down
   function forecastCards(forecast) {
     console.log(forecast);
-   // let theDate = new Date(day.dt * 1000);
+  // let theDate = new Date(day.dt * 1000);
   //  theDate = moment(theDate).format("MM/DD/YYYY");
-   // console.log(theDate)
+  // console.log(theDate)
     let dailyTemp = forecast.temp.day;
     let dailyHumidity = forecast.current.humidity;
 
@@ -90,7 +90,7 @@ $(document).submit(function () {
 
     //create the tag for hhumidy
     let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + dailyHumidity.toString() + "%");
-    newCared.append(fiveHumidity);
+    newCard.append(fiveHumidity);
       //give it text
       //give it a class
       //append to the first div(CREATED DIV)

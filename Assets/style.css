@@ -11,3 +11,12 @@
 .weather-results {
     float: right;
 }
+.low {
+    background-color: green;
+}
+.moderate {
+    background-color: orange;
+}
+.high {
+    background-color: red;
+}

@@ -71,7 +71,7 @@ $(document).submit(function () {
 
     //Create container el for this day (FIRST DIV)
      let newCard = $("<card>").addClass("card-body five-day");
-      newCard.append("forecast");
+      $(".forecast").append(newCard);
         //append to the main div 
         //add class if needed
 

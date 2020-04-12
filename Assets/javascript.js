@@ -60,13 +60,13 @@ $(document).submit(function () {
     url: forecastURL,
     method: "GET"
   }).then(function (forecast) {
-    function create5Day(); {
-      $("5-day").empty();
-      var weatherDays = forecast.daily;
-      for(var i; i < 6; i++) {
-        $()
-      }
-    }
+    // function create5Day(); {
+    //   $("5-day").empty();
+    //   var weatherDays = forecast.daily;
+    //   for(var i; i < 6; i++) {
+    //     $()
+    //   }
+    // }
 
 
    

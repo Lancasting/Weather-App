@@ -1,7 +1,6 @@
 $(document).submit(function () {
   let searchCity = $("#city").val();
   event.preventDefault();
-  init();
   let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=c3bf6fbdffae94cb7b006f03464d0b1d";
 
 
@@ -68,10 +67,10 @@ $(document).submit(function () {
   //  theDate = moment(theDate).format("MM/DD/YYYY");
   // console.log(theDate)
     let dailyTemp = forecast.temp.day;
-    let dailyHumidity = forecast.current.humidity;
+    let dailyHumidity = forecast.humidity;
 
     //Create container el for this day (FIRST DIV)
-     let newCard = $("<card>").addClass("card-body");
+     let newCard = $("<card>").addClass("card-body five-day");
       newCard.append("forecast");
         //append to the main div 
         //add class if needed
@@ -121,15 +120,10 @@ $(document).submit(function () {
 
     $("forecast").empty();
     let weatherDays = forecast.daily;
-    let dailyTemp = forecast.current.temp;
-
     for (let i = 1; i < 6; i++) {
       forecastCards(weatherDays[i]);//grab one day and you're creating a card with that day
       //weatherDays[i].weather[0].icon
     }
-  }
-  function init() {
-    innerHTML = "";
   }
 
 });

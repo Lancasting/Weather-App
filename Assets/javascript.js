@@ -1,4 +1,19 @@
+init();
+function init() {
+  loadCities();
+}
+
+function loadCities () {
+  cityList = JSON.parse(localStorage.getItem("city-search"));
+  if(cityList === null) {
+      cityList = [];
+  }
+  $("history").append(cityList);
+}
 $(document).submit(function () {
+  $("button").click(function () {
+    $(".weather-results").empty();
+  });
   let searchCity = $("#city").val();
   event.preventDefault();
   let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=c3bf6fbdffae94cb7b006f03464d0b1d";
@@ -16,19 +31,20 @@ $(document).submit(function () {
     let dayWindSpeed = response.wind.speed;
     let dayIcon = response.weather[0].icon;
     let cityName = response.name;
+    saveCity(cityName);
     let uvURL = "http://api.openweathermap.org/data/2.5/uvi?appid=a7aba1d83fecabd92ceeae64cf8f67a1&lat=" + lat + "&lon=" + lon;
     let forecastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=a7aba1d83fecabd92ceeae64cf8f67a1";
     let weatherResults = $(".weather-results");
 
     let title = $("<h2>").addClass(".card-title").text(cityName + Date().toString() + dayIcon);
     weatherResults.append(title);
+    let savedCity = cityName;
     let temp = $("<h6>").addClass(".card-subtitle temp-results").text("Temperature: " + dayTemp.toString().trim() + " Degrees");
     weatherResults.append(temp);
     let humidity = $("<h6>").addClass(".card-subtitle humidity-results").text("Humidity: " + dayHumidity.toString() + "%");
     weatherResults.append(humidity);
     let windSpeed = $("<h6>").addClass("card-subtitle windspeed-results").text("Wind Speed: " + dayWindSpeed.toString() + " MPH");
     weatherResults.append(windSpeed);
-
     $.ajax({
       url: uvURL,
       method: "GET"
@@ -41,12 +57,18 @@ $(document).submit(function () {
       $.ajax({
         url: forecastURL,
         method: "GET"
-      }).then(function (forecast) {
-        getForecast(forecast);
+      }).then(function (forecastResponse) {
+        console.log(forecastResponse.daily);
+        getForecast(forecastResponse);
       });
     });
   });
   
+  function saveCity(cityName) {
+    localStorage.setItem("city-search", JSON.stringify(cityName))
+
+  }
+
   function setUVcolor(uvIndexNumber) {
     uvIndexNumber = parseInt(uvIndexNumber);
     if (uvIndexNumber >= 2) {
@@ -61,65 +83,63 @@ $(document).submit(function () {
   }
 
   //Purpose is to create one card with the day passed down
-  function forecastCards(forecast) {
-    console.log(forecast);
-  // let theDate = new Date(day.dt * 1000);
-  //  theDate = moment(theDate).format("MM/DD/YYYY");
-  // console.log(theDate)
-    let dailyTemp = forecast.temp.day;
-    let dailyHumidity = forecast.humidity;
+  function forecastCards(forecastResponse) {
+    console.log(forecastResponse);
+    // let theDate = new Date(day.dt * 1000);
+    //  theDate = moment(theDate).format("MM/DD/YYYY");
+    // console.log(theDate)
+    let dailyTemp = forecastResponse.temp.day;
+    let dailyHumidity = forecastResponse.humidity;
 
     //Create container el for this day (FIRST DIV)
-     let newCard = $("<card>").addClass("card-body five-day");
-      $(".forecast").append(newCard);
-        //append to the main div 
-        //add class if needed
+    let newCard = $("<div").addClass("card-body five-day");
+    $(".forecast").append(newCard);
+    //append to the main div 
+    //add class if needed
 
     //Create the header sdisplaying the day
     //  let fiveDate = $("<h3>").addClass("card-title").text(theDate).toString();
-     // newContainer.append(fiveDate);
-      //give it text
-      //give it a class
-      //append to the first div(CREATED DIV)
+    // newContainer.append(fiveDate);
+    //give it text
+    //give it a class
+    //append to the first div(CREATED DIV)
 
     //Create the img tag for the icon
-      //Give it a source using the obj day
-      //give it a class
-      //apend to first first div(CREATED DIV)
+    //Give it a source using the obj day
+    //give it a class
+    //apend to first first div(CREATED DIV)
 
     //create the tag for hhumidy
     let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + dailyHumidity.toString() + "%");
     newCard.append(fiveHumidity);
-      //give it text
-      //give it a class
-      //append to the first div(CREATED DIV)
+    //give it text
+    //give it a class
+    //append to the first div(CREATED DIV)
     let fiveTemp = $("h6").addClass(".card-subtitle").text(dailyTemp);
     newCard.append(fiveTemp);
     //tag for temp
-      //give it text
-      //give it a class
-      //append to the first div(CREATED DIV)
+    //give it text
+    //give it a class
+    //append to the first div(CREATED DIV)
 
 
 
 
-      ///USE THIS TO HELP
+    ///USE THIS TO HELP
     // fiveDay.append(fiveHumidity);
-    
+
     // fiveDay.append(theDate).toString();
     // let iconFive = 
     // let dailyIcon = "http://openweathermap.org/img/wn/" + day.weather[0].icon + ".png";
     // fiveDay.append(dailyIcon);
     // let dailyHumidity = day.humidity;
-    
+
     // let fiveDay = $(".forecast");
 
   }
 
-  function getForecast(forecast) {
-
-    $("forecast").empty();
-    let weatherDays = forecast.daily;
+  function getForecast(forecastResponse) {
+    let weatherDays = forecastResponse.daily;
     for (let i = 1; i < 6; i++) {
       forecastCards(weatherDays[i]);//grab one day and you're creating a card with that day
       //weatherDays[i].weather[0].icon

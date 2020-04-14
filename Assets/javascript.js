@@ -4,28 +4,32 @@ function init() {
 }
 
 function loadCities () {
-  cityList = JSON.parse(localStorage.getItem("city-search"));
-  if(cityList === null) {
-      cityList = [];
-  }
-  $("history").append(cityList);
+  cityList = JSON.parse(localStorage.getItem("city-search")) || [];
+  
+  $(".history").append(cityList);
 }
+
+
+
 $(document).submit(function () {
+  event.preventDefault();
+  let searchCity = $("#city").val();
+  $(".history").on('click', "li", function() {
+    mainWeather($(this).text());
+    })
   $("button").click(function () {
     $(".weather-results").empty();
   });
-  let searchCity = $("#city").val();
-  event.preventDefault();
+  
+   // citylist
   let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=c3bf6fbdffae94cb7b006f03464d0b1d";
-
-
-  // Performing an AJAX request with the queryURL
   $.ajax({
     url: queryURL,
     method: "GET"
   }).then(function (response) {
     let lat = response.coord.lat;
     let lon = response.coord.lon;
+    forecast(lat, lon);
     let dayTemp = (response.main.temp - 273.15) * 9 / 5 + 32;
     let dayHumidity = response.main.humidity;
     let dayWindSpeed = response.wind.speed;
@@ -33,7 +37,7 @@ $(document).submit(function () {
     let cityName = response.name;
     saveCity(cityName);
     let uvURL = "http://api.openweathermap.org/data/2.5/uvi?appid=a7aba1d83fecabd92ceeae64cf8f67a1&lat=" + lat + "&lon=" + lon;
-    let forecastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=a7aba1d83fecabd92ceeae64cf8f67a1";
+    
     let weatherResults = $(".weather-results");
 
     let title = $("<h2>").addClass(".card-title").text(cityName + Date().toString() + dayIcon);
@@ -48,25 +52,38 @@ $(document).submit(function () {
     $.ajax({
       url: uvURL,
       method: "GET"
-    }).then(function (response) {
-      let dayUvIndex = response.value;
+    }).then(function (UVresponse) {
+      let dayUvIndex = UVresponse.value;
       let uvIndex = $("<h6>").addClass(".card-subtitle index-results").text("UV Index: " + dayUvIndex);
       weatherResults.append(uvIndex);
       setUVcolor(dayUvIndex);
-
-      $.ajax({
-        url: forecastURL,
-        method: "GET"
-      }).then(function (forecastResponse) {
-        console.log(forecastResponse.daily);
-        getForecast(forecastResponse);
-      });
     });
   });
   
+  function forecast(lat, lon) {
+  let forecastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=a7aba1d83fecabd92ceeae64cf8f67a1";
+  $.ajax({
+    url: forecastURL,
+    method: "GET"
+  }).then(function (forecastResponse) {
+      for (let i = 1; i < 6; i++) {
+        console.log(forecastResponse);
+ 
+          let fiveTemp = $("<p>").addClass(".card-subtitle").text(forecastResponse.daily[i].temp.day);
+          var body = $('<div>').addClass("card-body five-day")
+          var img = $("<img>").attr("src",)
+          var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
+          let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
+          $(".forecast").append(body.append(title, img, fiveTemp, fiveHumidity));
+      }
+  });
+}
+
   function saveCity(cityName) {
     localStorage.setItem("city-search", JSON.stringify(cityName))
-
+    if(cityList === null) {
+      cityList = [];
+  }
   }
 
   function setUVcolor(uvIndexNumber) {
@@ -81,69 +98,4 @@ $(document).submit(function () {
       $(".index-results").attr("class", "high");
     }
   }
-
-  //Purpose is to create one card with the day passed down
-  function forecastCards(forecastResponse) {
-    console.log(forecastResponse);
-    // let theDate = new Date(day.dt * 1000);
-    //  theDate = moment(theDate).format("MM/DD/YYYY");
-    // console.log(theDate)
-    let dailyTemp = forecastResponse.temp.day;
-    let dailyHumidity = forecastResponse.humidity;
-
-    //Create container el for this day (FIRST DIV)
-    let newCard = $("<div").addClass("card-body five-day");
-    $(".forecast").append(newCard);
-    //append to the main div 
-    //add class if needed
-
-    //Create the header sdisplaying the day
-    //  let fiveDate = $("<h3>").addClass("card-title").text(theDate).toString();
-    // newContainer.append(fiveDate);
-    //give it text
-    //give it a class
-    //append to the first div(CREATED DIV)
-
-    //Create the img tag for the icon
-    //Give it a source using the obj day
-    //give it a class
-    //apend to first first div(CREATED DIV)
-
-    //create the tag for hhumidy
-    let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + dailyHumidity.toString() + "%");
-    newCard.append(fiveHumidity);
-    //give it text
-    //give it a class
-    //append to the first div(CREATED DIV)
-    let fiveTemp = $("h6").addClass(".card-subtitle").text(dailyTemp);
-    newCard.append(fiveTemp);
-    //tag for temp
-    //give it text
-    //give it a class
-    //append to the first div(CREATED DIV)
-
-
-
-
-    ///USE THIS TO HELP
-    // fiveDay.append(fiveHumidity);
-
-    // fiveDay.append(theDate).toString();
-    // let iconFive = 
-    // let dailyIcon = "http://openweathermap.org/img/wn/" + day.weather[0].icon + ".png";
-    // fiveDay.append(dailyIcon);
-    // let dailyHumidity = day.humidity;
-
-    // let fiveDay = $(".forecast");
-
-  }
-
-  function getForecast(forecastResponse) {
-    let weatherDays = forecastResponse.daily;
-    for (let i = 1; i < 6; i++) {
-      forecastCards(weatherDays[i]);//grab one day and you're creating a card with that day
-      //weatherDays[i].weather[0].icon
-    }
-  }
-
 });

@@ -19,6 +19,7 @@ $(document).submit(function () {
     })
   $("button").click(function () {
     $(".weather-results").empty();
+    $(".forecast").empty();
   });
   
    // citylist
@@ -69,12 +70,14 @@ $(document).submit(function () {
       for (let i = 1; i < 6; i++) {
         console.log(forecastResponse);
  
-          let fiveTemp = $("<p>").addClass(".card-subtitle").text(forecastResponse.daily[i].temp.day);
-          var body = $('<div>').addClass("card-body five-day")
-          var img = $("<img>").attr("src",)
-          var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
+          let fTemp = (forecastResponse.daily[i].temp.day- 273.15) * 9 / 5 + 32;
+          let body = $('<div>').addClass("card-body five-day")
+        //  http://openweathermap.org/img/wn/10d@2x.png
+          let fiveTemp = $("<p>").addClass(".card-subtitle").text("Temperature: " + fTemp.toString().trim() + " Degrees");
+          let img = $("<img>").attr("src","http://openweathermap.org/img/wn/" + forecastResponse.daily[i].weather[0].icon + ".png");
+        //  var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
           let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
-          $(".forecast").append(body.append(title, img, fiveTemp, fiveHumidity));
+          $(".forecast").append(body.append(img, fiveTemp, fiveHumidity));
       }
   });
 }

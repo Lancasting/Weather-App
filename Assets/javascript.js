@@ -4,23 +4,35 @@ function init() {
 }
 
 function loadCities () {
-  cityList = JSON.parse(localStorage.getItem("city-search")) || [];
+  cityList = JSON.parse(localStorage.getItem("city-search"));
+  console.log(cityList);
+
+  if(cityList !== null) {
+    for (let i = 0; i < cityList.length; i++) {
+      let newCity = $("<li>").addClass("list-group-item").text(cityList[i]);
+      // create button and add text city search to it then append
+      // make sure that it's clickable
+      $(".history").append(newCity);
+      }
+    }
+
   
-  $(".history").append(cityList);
 }
 
+$(".history").on('click', "li", function() {
+  mainWeather($(this).text());
+  })
+$("button").click(function () {
+  $(".weather-results").empty();
+  $(".forecast").empty();
+});
 
+// write new function for onclick for history
+// if statement for if city already exists in citylist don't add to history
 
 $(document).submit(function () {
   event.preventDefault();
   let searchCity = $("#city").val();
-  $(".history").on('click', "li", function() {
-    mainWeather($(this).text());
-    })
-  $("button").click(function () {
-    $(".weather-results").empty();
-    $(".forecast").empty();
-  });
   
    // citylist
   let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=c3bf6fbdffae94cb7b006f03464d0b1d";
@@ -28,6 +40,7 @@ $(document).submit(function () {
     url: queryURL,
     method: "GET"
   }).then(function (response) {
+    console.log(response);
     let lat = response.coord.lat;
     let lon = response.coord.lon;
     forecast(lat, lon);
@@ -44,7 +57,7 @@ $(document).submit(function () {
     let title = $("<h2>").addClass(".card-title").text(cityName + Date().toString() + dayIcon);
     weatherResults.append(title);
     let savedCity = cityName;
-    let temp = $("<h6>").addClass(".card-subtitle temp-results").text("Temperature: " + dayTemp.toString().trim() + " Degrees");
+    let temp = $("<h6>").addClass(".card-subtitle temp-results").text("Temperature: " + dayTemp.toFixed(2).toString() + " Degrees");
     weatherResults.append(temp);
     let humidity = $("<h6>").addClass(".card-subtitle humidity-results").text("Humidity: " + dayHumidity.toString() + "%");
     weatherResults.append(humidity);
@@ -73,7 +86,7 @@ $(document).submit(function () {
           let fTemp = (forecastResponse.daily[i].temp.day- 273.15) * 9 / 5 + 32;
           let body = $('<div>').addClass("card-body five-day")
         //  http://openweathermap.org/img/wn/10d@2x.png
-          let fiveTemp = $("<p>").addClass(".card-subtitle").text("Temperature: " + fTemp.toString().trim() + " Degrees");
+          let fiveTemp = $("<p>").addClass(".card-subtitle").text("Temperature: " + fTemp.toFixed(2).toString() + " Degrees");
           let img = $("<img>").attr("src","http://openweathermap.org/img/wn/" + forecastResponse.daily[i].weather[0].icon + ".png");
         //  var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
           let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
@@ -83,10 +96,13 @@ $(document).submit(function () {
 }
 
   function saveCity(cityName) {
-    localStorage.setItem("city-search", JSON.stringify(cityName))
-    if(cityList === null) {
-      cityList = [];
-  }
+    let cityList = [];
+    // cityList.push(JSON.parse(localStorage.getItem("city-search")));
+    if (cityList.includes(cityName) === false){
+    cityList.push(cityName);
+    }
+    localStorage.setItem("city-search", JSON.stringify(cityList));
+    loadCities();
   }
 
   function setUVcolor(uvIndexNumber) {

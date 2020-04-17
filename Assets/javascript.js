@@ -4,9 +4,9 @@ function init() {
 }
 
 function loadCities () {
+  $(".history").empty();
   cityList = JSON.parse(localStorage.getItem("city-search"));
   console.log(cityList);
-
   if(cityList !== null) {
     for (let i = 0; i < cityList.length; i++) {
       let newCity = $("<li>").addClass("list-group-item").text(cityList[i]);
@@ -15,8 +15,6 @@ function loadCities () {
       $(".history").append(newCity);
       }
     }
-
-  
 }
 
 $(".history").on('click', "li", function() {
@@ -96,9 +94,16 @@ $(document).submit(function () {
 }
 
   function saveCity(cityName) {
-    let cityList = [];
-    // cityList.push(JSON.parse(localStorage.getItem("city-search")));
-    if (cityList.includes(cityName) === false){
+  let cityList = [];
+   let cityHistory = (JSON.parse(localStorage.getItem("city-search")));
+   console.log(cityHistory);
+
+   if (cityHistory !== null) {
+    for (let i=0; i < cityHistory.length; i++) {
+      cityList.push(cityHistory[i]);
+    }
+  }
+    if (!cityList.includes(cityName)){
     cityList.push(cityName);
     }
     localStorage.setItem("city-search", JSON.stringify(cityList));

@@ -1,12 +1,12 @@
 init();
 function init() {
+  // loadLastCity();
   loadCities();
+  let searchCity = $("#city").val();
 }
-
 function loadCities () {
   $(".history").empty();
   cityList = JSON.parse(localStorage.getItem("city-search"));
-  console.log(cityList);
   if(cityList !== null) {
     for (let i = 0; i < cityList.length; i++) {
       let newCity = $("<li>").addClass("list-group-item").text(cityList[i]);
@@ -15,30 +15,35 @@ function loadCities () {
       $(".history").append(newCity);
       }
     }
+   // mainWeather(cityList[cityList.length - 1]);
 }
 
-$(".history").on('click', "li", function() {
-  mainWeather($(this).text());
-  })
-$("button").click(function () {
+$(".main-search").click(function () {
+  event.preventDefault();
+  let searchCity = $("#city").val();
+  mainWeather(searchCity);
   $(".weather-results").empty();
   $(".forecast").empty();
 });
 
+$(".history").on('click', "li", function() {
+  $(".weather-results").empty();
+  $(".forecast").empty();
+  mainWeather($(this).text());
+  })
 // write new function for onclick for history
 // if statement for if city already exists in citylist don't add to history
 
-$(document).submit(function () {
-  event.preventDefault();
-  let searchCity = $("#city").val();
-  
-   // citylist
-  let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=c3bf6fbdffae94cb7b006f03464d0b1d";
+//$(document).submit(function () {
+
+  // event.preventDefault();
+  function mainWeather(searchCity) {
+   // citylist 
+  let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=9958a2ee61c39e3cb30389f464da2b0c";
   $.ajax({
     url: queryURL,
     method: "GET"
   }).then(function (response) {
-    console.log(response);
     let lat = response.coord.lat;
     let lon = response.coord.lon;
     forecast(lat, lon);
@@ -61,17 +66,20 @@ $(document).submit(function () {
     weatherResults.append(humidity);
     let windSpeed = $("<h6>").addClass("card-subtitle windspeed-results").text("Wind Speed: " + dayWindSpeed.toString() + " MPH");
     weatherResults.append(windSpeed);
+    // save results to local storage .val
     $.ajax({
       url: uvURL,
       method: "GET"
     }).then(function (UVresponse) {
       let dayUvIndex = UVresponse.value;
-      let uvIndex = $("<h6>").addClass(".card-subtitle index-results").text("UV Index: " + dayUvIndex);
+      let uvIndex = $("<h6>").addClass(".card-subtitle index-results").text("UV Index: ");
+      let uvPara =  $("<p2>").text(dayUvIndex);
+      uvIndex.append(uvPara);
       weatherResults.append(uvIndex);
-      setUVcolor(dayUvIndex);
+      setUVcolor(uvPara);
     });
   });
-  
+  }
   function forecast(lat, lon) {
   let forecastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=a7aba1d83fecabd92ceeae64cf8f67a1";
   $.ajax({
@@ -79,8 +87,7 @@ $(document).submit(function () {
     method: "GET"
   }).then(function (forecastResponse) {
       for (let i = 1; i < 6; i++) {
-        console.log(forecastResponse);
- 
+           //let date = (forecast.response.list.dt_txt)
           let fTemp = (forecastResponse.daily[i].temp.day- 273.15) * 9 / 5 + 32;
           let body = $('<div>').addClass("card-body five-day")
         //  http://openweathermap.org/img/wn/10d@2x.png
@@ -96,7 +103,6 @@ $(document).submit(function () {
   function saveCity(cityName) {
   let cityList = [];
    let cityHistory = (JSON.parse(localStorage.getItem("city-search")));
-   console.log(cityHistory);
 
    if (cityHistory !== null) {
     for (let i=0; i < cityHistory.length; i++) {
@@ -110,16 +116,25 @@ $(document).submit(function () {
     loadCities();
   }
 
-  function setUVcolor(uvIndexNumber) {
-    uvIndexNumber = parseInt(uvIndexNumber);
-    if (uvIndexNumber >= 2) {
-      $(".index-results").attr("class", "low");
+  function setUVcolor(uvPara) {
+    // let uvIndexNumber = 0;
+    uvPara = parseInt(uvIndexNumber);
+    if (uvIndexNumber <= 2) {
+      $("p2").attr("class", "low");
     }
-    else if (uvIndexNumber < 2 && uvIndexNumber >= 7) {
-      $(".index-results").attr("class", "moderate");
+    else if (uvIndexNumber > 2 && uvIndexNumber <= 6) {
+      $("p2").attr("class", "moderate");
     }
-    else if (uvIndexNumber < 7) {
-      $(".index-results").attr("class", "high");
+    else if (uvIndexNumber >= 7) {
+      $("p2").attr("class", "high");
     }
   }
-});
+
+  // function loadLastCity() {
+  //   if (cityList === []) {
+  //     mainWeather(cityList[cityList.length - 1]);
+  //   }
+  //   else if (cityList === null)
+  //   return;
+  // }
+//});  

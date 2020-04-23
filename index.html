@@ -14,7 +14,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar text-center">Weather Dashboard</a>
   </nav>
-  <div class="container">
+  <div class="container col-lg-12">
     <div class="row">
       <div class="col-md-3 card-search">
         <div class="card-body">
@@ -23,7 +23,7 @@
             <div class="form-group">
               <label for="city">City Search</label>
               <input type="city-search" class="form-control" id="city"> <button type="submit"
-                class="btn btn-primary">Submit</button>
+                class="btn btn-primary main-search">Submit</button>
             </div>
           </form>
           <ul class="list-group history"></ul>
@@ -31,10 +31,9 @@
       </div>
       <div class="card-body col-md-9">
         <div class="weather-results"></div>
+        <div class="forecast row float-right col-md-8"></div>
       </div>
       </div>
-    </div>
-    <div class="forecast row float-right col-md-9">
     </div>
   </div>
 

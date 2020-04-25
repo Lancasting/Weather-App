@@ -1,3 +1,4 @@
+let cityList = JSON.parse(localStorage.getItem("city-search"));
 init();
 function init() {
   // loadLastCity();
@@ -5,8 +6,8 @@ function init() {
   let searchCity = $("#city").val();
 }
 function loadCities () {
-  $(".history").empty();
   cityList = JSON.parse(localStorage.getItem("city-search"));
+  $(".history").empty();
   if(cityList !== null) {
     for (let i = 0; i < cityList.length; i++) {
       let newCity = $("<li>").addClass("list-group-item").text(cityList[i]);
@@ -15,9 +16,10 @@ function loadCities () {
       $(".history").append(newCity);
       }
     }
-   // mainWeather(cityList[cityList.length - 1]);
 }
-
+if (cityList){
+mainWeather(cityList[cityList.length - 1]);
+}
 $(".main-search").click(function () {
   event.preventDefault();
   let searchCity = $("#city").val();
@@ -50,15 +52,19 @@ $(".history").on('click', "li", function() {
     let dayTemp = (response.main.temp - 273.15) * 9 / 5 + 32;
     let dayHumidity = response.main.humidity;
     let dayWindSpeed = response.wind.speed;
-    let dayIcon = response.weather[0].icon;
+    let dayIcon = $("<img>").attr("src","http://openweathermap.org/img/wn/" + response.weather[0].icon + ".png");
     let cityName = response.name;
     saveCity(cityName);
     let uvURL = "http://api.openweathermap.org/data/2.5/uvi?appid=a7aba1d83fecabd92ceeae64cf8f67a1&lat=" + lat + "&lon=" + lon;
     
     let weatherResults = $(".weather-results");
+    let d = new Date();
+    let date = d.toLocaleDateString()
 
-    let title = $("<h2>").addClass(".card-title").text(cityName + Date().toString() + dayIcon);
-    weatherResults.append(title);
+
+    let title = $("<h2>").addClass(".card-title").text(cityName + " " + date);
+    //let dateTitle = title.toLocaleString();
+    weatherResults.append(title, dayIcon);
     let savedCity = cityName;
     let temp = $("<h6>").addClass(".card-subtitle temp-results").text("Temperature: " + dayTemp.toFixed(2).toString() + " Degrees");
     weatherResults.append(temp);
@@ -76,7 +82,7 @@ $(".history").on('click', "li", function() {
       let uvPara =  $("<p2>").text(dayUvIndex);
       uvIndex.append(uvPara);
       weatherResults.append(uvIndex);
-      setUVcolor(uvPara);
+      setUVcolor(dayUvIndex);
     });
   });
   }
@@ -86,15 +92,16 @@ $(".history").on('click', "li", function() {
     url: forecastURL,
     method: "GET"
   }).then(function (forecastResponse) {
+    console.log(forecastResponse);
       for (let i = 1; i < 6; i++) {
-           //let date = (forecast.response.list.dt_txt)
+          //let date = (response.list[i].dt_txt)
           let fTemp = (forecastResponse.daily[i].temp.day- 273.15) * 9 / 5 + 32;
           let body = $('<div>').addClass("card-body five-day")
         //  http://openweathermap.org/img/wn/10d@2x.png
           let fiveTemp = $("<p>").addClass(".card-subtitle").text("Temperature: " + fTemp.toFixed(2).toString() + " Degrees");
           let img = $("<img>").attr("src","http://openweathermap.org/img/wn/" + forecastResponse.daily[i].weather[0].icon + ".png");
         //  var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
-          let fiveHumidity = $("<h6>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
+          let fiveHumidity = $("<p>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
           $(".forecast").append(body.append(img, fiveTemp, fiveHumidity));
       }
   });
@@ -118,7 +125,7 @@ $(".history").on('click', "li", function() {
 
   function setUVcolor(uvPara) {
     // let uvIndexNumber = 0;
-    uvPara = parseInt(uvIndexNumber);
+    let uvIndexNumber = parseInt(uvPara);
     if (uvIndexNumber <= 2) {
       $("p2").attr("class", "low");
     }
@@ -130,11 +137,9 @@ $(".history").on('click', "li", function() {
     }
   }
 
-  // function loadLastCity() {
-  //   if (cityList === []) {
-  //     mainWeather(cityList[cityList.length - 1]);
-  //   }
-  //   else if (cityList === null)
-  //   return;
-  // }
+  //  function loadLastCity() {
+  //    if (cityList) {
+  //      mainWeather(cityList[cityList.length - 1]);
+  //    }
+  //  }
 //});  

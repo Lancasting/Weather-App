@@ -1,16 +1,14 @@
 let cityList = JSON.parse(localStorage.getItem("city-search"));
 init();
 function init() {
-  // loadLastCity();
   loadCities();
-  let searchCity = $("#city").val();
 }
 function loadCities () {
   cityList = JSON.parse(localStorage.getItem("city-search"));
   $(".history").empty();
   if(cityList !== null) {
     for (let i = 0; i < cityList.length; i++) {
-      let newCity = $("<li>").addClass("list-group-item").text(cityList[i]);
+      let newCity = $("<li>").addClass("list-group-item btn btn-secondary").text(cityList[i]);
       // create button and add text city search to it then append
       // make sure that it's clickable
       $(".history").append(newCity);
@@ -33,14 +31,8 @@ $(".history").on('click', "li", function() {
   $(".forecast").empty();
   mainWeather($(this).text());
   })
-// write new function for onclick for history
-// if statement for if city already exists in citylist don't add to history
 
-//$(document).submit(function () {
-
-  // event.preventDefault();
   function mainWeather(searchCity) {
-   // citylist 
   let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=9958a2ee61c39e3cb30389f464da2b0c";
   $.ajax({
     url: queryURL,
@@ -63,16 +55,14 @@ $(".history").on('click', "li", function() {
 
 
     let title = $("<h2>").addClass(".card-title").text(cityName + " " + date);
-    //let dateTitle = title.toLocaleString();
     weatherResults.append(title, dayIcon);
-    let savedCity = cityName;
     let temp = $("<h6>").addClass(".card-subtitle temp-results").text("Temperature: " + dayTemp.toFixed(2).toString() + " Degrees");
     weatherResults.append(temp);
     let humidity = $("<h6>").addClass(".card-subtitle humidity-results").text("Humidity: " + dayHumidity.toString() + "%");
     weatherResults.append(humidity);
     let windSpeed = $("<h6>").addClass("card-subtitle windspeed-results").text("Wind Speed: " + dayWindSpeed.toString() + " MPH");
     weatherResults.append(windSpeed);
-    // save results to local storage .val
+ 
     $.ajax({
       url: uvURL,
       method: "GET"
@@ -92,17 +82,16 @@ $(".history").on('click', "li", function() {
     url: forecastURL,
     method: "GET"
   }).then(function (forecastResponse) {
-    console.log(forecastResponse);
       for (let i = 1; i < 6; i++) {
-          //let date = (response.list[i].dt_txt)
+          let theDate = new Date(forecastResponse.daily[i].dt * 1000);
+          theDate = moment(theDate).format("MM/DD/YYYY");
           let fTemp = (forecastResponse.daily[i].temp.day- 273.15) * 9 / 5 + 32;
           let body = $('<div>').addClass("card-body five-day")
-        //  http://openweathermap.org/img/wn/10d@2x.png
+
           let fiveTemp = $("<p>").addClass(".card-subtitle").text("Temperature: " + fTemp.toFixed(2).toString() + " Degrees");
           let img = $("<img>").attr("src","http://openweathermap.org/img/wn/" + forecastResponse.daily[i].weather[0].icon + ".png");
-        //  var title = $('<h5>').addClass('card-title').text( "Temp: " + forecastResponse.daily[i].dt_txt).toString();
           let fiveHumidity = $("<p>").addClass(".card-subtitle").text("Humidity: " + forecastResponse.daily[i].humidity.toString() + "%");
-          $(".forecast").append(body.append(img, fiveTemp, fiveHumidity));
+          $(".forecast").append(body.append(theDate, img, fiveTemp, fiveHumidity));
       }
   });
 }
@@ -124,7 +113,6 @@ $(".history").on('click', "li", function() {
   }
 
   function setUVcolor(uvPara) {
-    // let uvIndexNumber = 0;
     let uvIndexNumber = parseInt(uvPara);
     if (uvIndexNumber <= 2) {
       $("p2").attr("class", "low");
@@ -136,10 +124,3 @@ $(".history").on('click', "li", function() {
       $("p2").attr("class", "high");
     }
   }
-
-  //  function loadLastCity() {
-  //    if (cityList) {
-  //      mainWeather(cityList[cityList.length - 1]);
-  //    }
-  //  }
-//});  

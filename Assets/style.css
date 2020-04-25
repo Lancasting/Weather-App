@@ -22,12 +22,16 @@
     background-color: red;
 }
 .five-day {
-    background-color: blue;
+    background-color: #4287f5;
     color: white;
+    border-radius: 25px;
     margin-left: 10px;
     margin-right: 10px;
-    width: 80px;
+    width: 50px;
 }
+.five-day:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
 .container {
     margin: 0 !important;
 }
@@ -35,4 +39,7 @@
 .forecast {
     margin-top: 20px;
     font-size: 12px;
+}
+.btn-secondary{
+    color: black;
 }
